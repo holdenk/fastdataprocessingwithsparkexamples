@@ -23,26 +23,33 @@ object LoadCsvWithCountersExample {
     val invalidNumericLineCounter = sc.accumulator(0)
     sc.addFile(inputFile)
     val inFile = sc.textFile(inputFile)
-    val splitLines = inFile.map(line => {
+    val splitLines = inFile.flatMap(line => {
       try {
 	val reader = new CSVReader(new StringReader(line))
-	reader.readNext()
+	Some(reader.readNext())
       } catch {
-	case _ => invalidLineCounter += 1
+	case _ => {
+	  invalidLineCounter += 1
+	  None
+	}
       }
     }
 			      )
-    val numericData = splitLines.map(line => {
+    val numericData = splitLines.flatMap(line => {
       try {
-	line.map(_.toDouble)
+	Some(line.map(_.toDouble))
       } catch {
-	case _ => invalidNumericLineCounter += 1
+	case _ => {
+	  invalidNumericLineCounter += 1
+	  None
+	}
       }
     }
     )
     val summedData = numericData.map(row => row.sum)
     println(summedData.collect().mkString(","))
     println("Errors: "+invalidLineCounter+","+invalidNumericLineCounter)
+    println(summedData.stats())
   }
 
 }

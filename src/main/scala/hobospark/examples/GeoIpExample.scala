@@ -1,4 +1,4 @@
-package spark.examples
+package hobospark.examples
 
 import spark.SparkContext
 import spark.SparkContext._
@@ -8,6 +8,7 @@ import spark.util.Vector
 import au.com.bytecode.opencsv.CSVReader
 
 import java.io.StringReader
+import java.io.File
 
 import com.snowplowanalytics.maxmind.geoip.IpGeo
 
@@ -23,11 +24,11 @@ object GeoIpExample {
     val master = args(0)
     val inputFile = args(1)
     val iterations = 100
-    val sc = new SparkContext(master, "Load CSV With Counters Example",
+    val maxMindPath = "GeoLiteCity.dat"
+    val sc = new SparkContext(master, "GeoIpExample",
 			      System.getenv("SPARK_HOME"),
 			      Seq(System.getenv("JARS")))
     val invalidLineCounter = sc.accumulator(0)
-    sc.addFile(inputFile)
     val inFile = sc.textFile(inputFile)
     val parsedInput = inFile.flatMap(line => {
       try {
@@ -40,10 +41,13 @@ object GeoIpExample {
 	}
       }
     })
-    val geoFile = sc.addFile("/opt/maxmind/GeoLiteCity.dat")
-    val ipGeo = IpGeo(dbFile = SparkFiles.get("/opt/maxmind/GeoLiteCity.dat"))
+    val geoFile = sc.addFile(maxMindPath)
+
     // getLocation gives back an option so we use flatMap to only output if its a some type
-    val ipCountries = parsedInput.flatMap(pair => ipGeo.getLocation(pair._1).map(c => (pair._1, c.countryCode)))
+    val ipCountries = parsedInput.flatMap(pair => {
+     val ipGeo = IpGeo(dbFile = SparkFiles.get(maxMindPath))
+     ipGeo.getLocation(pair._1).map(c => (pair._1, c.countryCode))
+     })
     ipCountries.cache()
     val countries = ipCountries.values.distinct().collect()
     val countriesSignal = ipCountries.mapValues(country => countries.map(s => if (country == s) 1. else 0.))

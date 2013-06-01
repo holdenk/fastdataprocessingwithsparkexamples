@@ -2,7 +2,7 @@ package spark.examples
 
 import spark.SparkContext
 import spark.SparkContext._
-import spark.SparkFiles;
+import spark.SparkFiles
 
 import au.com.bytecode.opencsv.CSVReader
 

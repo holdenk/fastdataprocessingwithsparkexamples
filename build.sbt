@@ -4,12 +4,13 @@ assemblySettings
 
 scalaVersion := "2.9.2"
 
-name := "groupbytest"
+name := "fastdataprocessingwithsparkexamples"
 
 libraryDependencies ++= Seq(
     "org.spark-project" % "spark-core_2.9.2" % "0.7.0",
     "net.sf.opencsv" % "opencsv" % "2.0",
-    "org.apache.hbase" % "hbase" % "0.94.6"
+    "org.apache.hbase" % "hbase" % "0.94.6",
+    "com.snowplowanalytics"  %% "scala-maxmind-geoip"  % "0.0.5"
 )
 
 resolvers ++= Seq(
@@ -18,7 +19,9 @@ resolvers ++= Seq(
    "Cloudera Repository" at "https://repository.cloudera.com/artifactory/cloudera-repos/",
    "Akka Repository" at "http://repo.akka.io/releases/",
    "Twitter4J Repository" at "http://twitter4j.org/maven2/",
-   "Apache HBase" at "https://repository.apache.org/content/repositories/releases"
+   "Apache HBase" at "https://repository.apache.org/content/repositories/releases",
+   "SnowPlow Repo" at "http://maven.snplow.com/releases/",
+   "Twitter Maven Repo" at "http://maven.twttr.com/"
 )
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>

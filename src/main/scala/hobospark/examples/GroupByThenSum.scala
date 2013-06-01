@@ -16,7 +16,6 @@ object GroupByThenSum {
     
     var numMappers = 2
     var numKVPairs = 10000
-    var numReducers = 4
 
     val sc = new SparkContext(args(0), "GroupByThenSum",
       System.getenv("SPARK_HOME"), Seq(System.getenv("SPARK_EXAMPLES_JAR")))
@@ -31,9 +30,18 @@ object GroupByThenSum {
     }.cache
     // Enforce that everything has been calculated and in cache
     pairs1.count
-    val pandas = pairs1.groupByKey(numReducers).map(x => (x._1, x._2.sum))
+    val pandas = pairs1.groupByKey().map(x => (x._1, x._2.sum))
+    val otherPandas = pairs1.reduceByKey((x,y) => x+y)
+    val foldExample = pairs1.groupByKey().mapValues(x => {x.fold(0)((a,b) => a+b)})
+    val coGroupedPandas = pandas.cogroup(otherPandas)
+    pandas.cache()
+    otherPandas.cache()
+    coGroupedPandas.cache()
 
-    println(pandas)
+
+    println("Group by then sum:"+pandas.collect().toList)
+    println("Reduce by key:"+otherPandas.collect().toList)
+    println("co grouped:"+coGroupedPandas.collect().toList)
 
     System.exit(0)
   }

@@ -50,7 +50,8 @@ object GeoIpExample {
      })
     ipCountries.cache()
     val countries = ipCountries.values.distinct().collect()
-    val countriesSignal = ipCountries.mapValues(country => countries.map(s => if (country == s) 1. else 0.))
+    val countriesBc = sc.broadcast(countries)
+    val countriesSignal = ipCountries.mapValues(country => countriesBc.value.map(s => if (country == s) 1. else 0.))
     val dataPoints = parsedInput.join(countriesSignal).map(input => {
       input._2 match {
 	case (countryData, originalData) => DataPoint(new Vector(countryData++originalData.slice(1,originalData.size-2)) , originalData(originalData.size-1))

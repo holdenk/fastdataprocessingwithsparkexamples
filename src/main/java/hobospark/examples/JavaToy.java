@@ -5,6 +5,7 @@ import spark.api.java.JavaPairRDD;
 import spark.api.java.JavaRDD;
 import spark.api.java.JavaSparkContext;
 import spark.api.java.function.FlatMapFunction;
+import spark.api.java.function.Function;
 import spark.api.java.function.Function2;
 import spark.api.java.function.PairFunction;
 
@@ -17,5 +18,9 @@ public class JavaToy {
         System.getenv("SPARK_HOME"), System.getenv("JARS"));
       List<Integer> data = Arrays.asList(1,2,4);
       JavaRDD<Integer> dataRDD = sc.parallelize(data);
+      JavaRDD<Integer> addedOne = dataRDD.map(new Function<Integer, Integer>() { public Integer call(Integer x) { return x+1;}});
+      System.out.println(addedOne.collect());
+      Integer summed = dataRDD.reduce(new Function2<Integer, Integer, Integer>(){ public Integer call(Integer x, Integer y) { return x+y;} });
+      System.out.println(summed);
   }
 }

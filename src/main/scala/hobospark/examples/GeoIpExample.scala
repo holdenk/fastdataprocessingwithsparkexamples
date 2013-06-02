@@ -44,8 +44,8 @@ object GeoIpExample {
     val geoFile = sc.addFile(maxMindPath)
 
     // getLocation gives back an option so we use flatMap to only output if its a some type
+    val ipGeo = IpGeo(dbFile = maxMindPath)
     val ipCountries = parsedInput.flatMap(pair => {
-     val ipGeo = IpGeo(dbFile = SparkFiles.get(maxMindPath))
      ipGeo.getLocation(pair._1).map(c => (pair._1, c.countryCode))
      })
     ipCountries.cache()
@@ -56,6 +56,6 @@ object GeoIpExample {
 	case (countryData, originalData) => DataPoint(new Vector(countryData++originalData.slice(1,originalData.size-2)) , originalData(originalData.size-1))
       }
     })
-    println("Data points :"+dataPoints)
+    println("Data points :"+dataPoints.collect())
   }
 }

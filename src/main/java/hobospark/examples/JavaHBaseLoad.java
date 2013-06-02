@@ -1,4 +1,4 @@
-package spark.examples;
+package hobospark.examples;
 
 import spark.api.java.JavaPairRDD;
 import spark.api.java.JavaSparkContext;

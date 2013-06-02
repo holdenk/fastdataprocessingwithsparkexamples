@@ -1,4 +1,4 @@
-package spark.examples;
+package hobospark.examples;
 
 import spark.api.java.JavaPairRDD;
 import spark.api.java.JavaSparkContext;
@@ -16,6 +16,8 @@ public class JavaLoadCsvCounters {
     }
     String master = args[0];
     String inputFile = args[1];
-    Accumulator[Int] 
+    JavaSparkContext sc = new JavaSparkContext(master, "java load csv with counters",
+        System.getenv("SPARK_HOME"), System.getenv("JARS"));
+    Accumulator[Int] errors = sc.accumulator(0);
   }
 }

@@ -60,7 +60,7 @@ object GeoIpExample {
     })
     countriesSignal.cache()
     dataPoints.cache()
-    val rand = new Random(53)
+    val rand = new Random(5)
     var w = Vector(dataPoints.first.x.length, _ => rand.nextDouble)
     for (i <- 1 to iterations) {
       val gradient = dataPoints.map(p =>

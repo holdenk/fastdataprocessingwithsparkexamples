@@ -1,6 +1,5 @@
 package hobospark.examples;
 
-import spark.Accumulator;
 import spark.api.java.JavaRDD;
 import spark.api.java.JavaPairRDD;
 import spark.api.java.JavaDoubleRDD;

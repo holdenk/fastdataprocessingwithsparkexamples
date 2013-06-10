@@ -1,4 +1,4 @@
-package spark.examples
+package hobospark.examples
 
 import spark.SparkContext
 import spark.SparkContext._
@@ -15,7 +15,7 @@ object TestableLoadCsvExample {
   }
   def main(args: Array[String]) {
     if (args.length != 2) {
-      System.err.println("Usage: LoadCsvExample <master> <inputfile>")
+      System.err.println("Usage: TestableLoadCsvExample <master> <inputfile>")
       System.exit(1)
     }
     val master = args(0)
@@ -25,7 +25,7 @@ object TestableLoadCsvExample {
 			      Seq(System.getenv("JARS")))
     sc.addFile(inputFile)
     val inFile = sc.textFile(inputFile)
-    val numericData = inFile.map(parseLine(_))
+    val numericData = inFile.map(parseLine)
     val summedData = numericData.map(row => row.sum)
     println(summedData.collect().mkString(","))
   }

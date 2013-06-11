@@ -1,11 +1,13 @@
 package hobospark.examples;
 
+import spark.Accumulator;
 import spark.api.java.JavaRDD;
 import spark.api.java.JavaPairRDD;
 import spark.api.java.JavaDoubleRDD;
 import spark.api.java.JavaSparkContext;
 import spark.api.java.function.DoubleFunction;
 import spark.api.java.function.Function;
+import spark.api.java.function.FlatMapFunction;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -15,21 +17,29 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class JavaLoadCsvMoreTestable {
-    public static class ParseLine extends Function<String, Integer[]> {
-	public Integer[] call(String line) throws Exception {
-	    CSVReader reader = new CSVReader(new StringReader(line));
-	    String[] parsedLine = reader.readNext();
-	    Integer[] intLine = new Integer[parsedLine.length];
-	    for (int i = 0; i < parsedLine.length; i++) {
-		intLine[i] = Integer.parseInt(parsedLine[i]);
+    public static class ParseLineWithAcc extends FlatMapFunction<String, Integer[]> {
+	Accumulator<Integer> acc;
+	ParseLineWithAcc(Accumulator<Integer> acc) {
+	    this.acc = acc;
+	}
+	public Iterable<Integer[]> call(String line) throws Exception {
+	    ArrayList<Integer[]> result = new ArrayList<Integer[]>();
+	    try {
+		CSVReader reader = new CSVReader(new StringReader(line));
+		String[] parsedLine = reader.readNext();
+		Integer[] intLine = new Integer[parsedLine.length];
+		for (int i = 0; i < parsedLine.length; i++) {
+		    intLine[i] = Integer.parseInt(parsedLine[i]);
+		}
+		result.add(intLine);
+	    } catch (Exception e) {
+		acc.add(1);
 	    }
-	    return intLine;
+	    return result;
 	}
     }
-    public static JavaDoubleRDD processData(JavaSparkContext sc, JavaRDD<String> input) {
-	JavaRDD<Integer[]> splitLines = input.map(new ParseLine());
-	splitLines.cache();
-	System.out.println("Loaded data "+splitLines.collect());
+    public static JavaDoubleRDD processData(Accumulator<Integer> acc, JavaRDD<String> input) {
+	JavaRDD<Integer[]> splitLines = input.flatMap(new ParseLineWithAcc(acc));
 	JavaDoubleRDD summedData = splitLines.map(new DoubleFunction<Integer[]>() {
 		public Double call(Integer[] in) {
 		    Double ret = 0.;
@@ -52,7 +62,7 @@ public class JavaLoadCsvMoreTestable {
 	JavaSparkContext sc = new JavaSparkContext(master, "java load csv with counters",
 						   System.getenv("SPARK_HOME"), System.getenv("JARS"));
 	JavaRDD<String> inFile = sc.textFile(inputFile);
-	JavaDoubleRDD summedData = processData(sc, inFile);
+	JavaDoubleRDD summedData = processData(sc.accumulator(0), inFile);
 	System.out.println(summedData.stats());
     }
 }

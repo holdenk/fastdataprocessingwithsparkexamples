@@ -12,6 +12,7 @@ class MoreTestableLoadCsvExampleSuite extends FunSuite with ShouldMatchers {
     val input = sc.parallelize(List("1,2","1,3"))
     val result = MoreTestableLoadCsvExample.handleInput(counter, input)
     result.collect() should equal (Array[Int](3,4))
+    sc.stop()
   }
   test("should parse a csv line with numbers") {
     MoreTestableLoadCsvExample.parseLine("1,2") should equal (Array[Double](1.0,2.0))

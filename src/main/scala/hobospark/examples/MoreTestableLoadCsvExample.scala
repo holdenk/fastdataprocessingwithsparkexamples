@@ -46,5 +46,4 @@ object MoreTestableLoadCsvExample {
     println("Errors: "+invalidLineCounter)
     println(summedData.stats())
   }
-
 }

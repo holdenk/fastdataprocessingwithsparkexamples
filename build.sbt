@@ -6,13 +6,17 @@ scalaVersion := "2.9.3"
 
 name := "fastdataprocessingwithsparkexamples"
 
+parallelExecution in Test := false
+
 libraryDependencies ++= Seq(
     "org.spark-project" % "spark-core_2.9.3" % "0.7.2",
     "net.sf.opencsv" % "opencsv" % "2.0",
     "org.apache.hbase" % "hbase" % "0.94.6",
     "org.slf4j" % "slf4j-log4j12" % "1.6.1",
     "com.snowplowanalytics"  %% "scala-maxmind-geoip"  % "0.0.5",
-    "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+    "org.scalatest" %% "scalatest" % "1.9.1" % "test",
+    "junit" % "junit" % "4.11" % "test",
+    "com.novocode" % "junit-interface" % "0.8" % "test->default"
 )
 
 resolvers ++= Seq(

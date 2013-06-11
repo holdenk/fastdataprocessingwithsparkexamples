@@ -1,4 +1,4 @@
-package hobospark.examples;
+package pandaspark.examples;
 
 import spark.Accumulator;
 import spark.api.java.JavaRDD;

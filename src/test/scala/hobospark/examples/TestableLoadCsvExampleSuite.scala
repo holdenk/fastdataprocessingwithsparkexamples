@@ -1,4 +1,4 @@
-package hobospark.examples
+package pandaspark.examples
 
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers

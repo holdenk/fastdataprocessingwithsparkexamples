@@ -1,4 +1,4 @@
-package hobospark.examples
+package pandaspark.examples
 
 import spark.SparkContext
 import spark.SparkContext._

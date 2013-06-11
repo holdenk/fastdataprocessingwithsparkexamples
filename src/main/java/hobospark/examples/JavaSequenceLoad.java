@@ -1,4 +1,4 @@
-package hobospark.examples;
+package pandaspark.examples;
 
 import scala.Tuple2;
 import spark.api.java.JavaPairRDD;
